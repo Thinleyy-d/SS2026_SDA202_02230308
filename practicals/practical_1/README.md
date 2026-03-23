@@ -1,81 +1,141 @@
-UNDERSTANDING THE PROBLEM
+# Designing a URL Shortener – My Personal Analysis
 
-- The problem is about creating a system like a URL shortener for example TinyURL. This system takes an URL and turns it into a short one. 
-When someone clicks the URL it should take them to the original URL. It also has to handle an amount of traffic without breaking down. 
-The system needs to deal with 100 million URLs per day. It has reads than writes, about 10 to 1. 
-The data needs to be kept for 10 years. Every short URL must be unique.
+## 1. Problem Statement
 
-- This is about building something that works in the world. It has to handle billions of records respond instantly and not crash under load. The
-URL shortener system is like a machine that helps people use shorter URLs.
+We need to design a system that can take a URL and turn it into a short one, like TinyURL. At first it seems easy, but when you think about all the details it gets complicated.
 
-LOOKING AT SOLUTIONS
+The system has to do two things:
 
-1. High-Level Design
+- Take a long URL and give back a short one
+- When someone visits the short URL, send them back to the original URL
 
-- The design uses two APIs, one is a POST request to create an URL while the other one is a GET request to redirect to the URL. This is clean and
-straightforward. It follows REST design. The APIs are like two doors. One door lets you in to create an URL. The other door takes you to the URL.
+### What the System Has to Handle
 
-2. URL Redirection
+- It has to deal with 100 million new URLs every day
+- For every one URL that is created, it is visited 10 times
+- It has to run for 10 years, which means it will have to handle about 365 billion URLs
+- It will need around 365 TB of storage space over that time
+- The short URLs are made up of numbers and letters from 0–9, a–z, and A–Z
+- Once a URL is stored it cannot be changed or deleted
 
-- There are two ways to redirect. One is 301 Redirect. This is permanent. The browser saves it. This is faster. Uses less server resources. The
-other is 302 Redirect. This is temporary. The request always goes through the server. This means you can track it. This is useful for analytics.
-If the goal is speed use 301. If the goal is tracking user behavior use 302. Both have use cases depending on what the product needs.
+This is not just about writing code. The real challenge is making something that can handle billions of records and still work fast and reliably.
 
-- For example if you want people to go to your website quickly you can use 301.. If you want to know how many people are going to your website you
-can use 302.
+---
 
-3. Data Storage
+## 2. Breaking Down the Solution
 
-- At first a hash table might seem like an option.. That only lives in memory, which is expensive and not practical at scale. A proper database
-with columns for ID, short URL and long URL is the approach for storing this kind of data long-term. The database is like a box that stores all the
-URLs.
+### API Design
 
-4. Hashing
+We only need two endpoints:
+```
+POST /api/v1/data/shorten
+Input:  the long URL
+Output: the short URL
 
-- There are two approaches. The first is hash-based generation. You take the URL hash it and cut the result down to 7 characters. The problem is
-that two different URLs can sometimes produce the hash, which is called a collision. Handling collisions means checks against the database, which
-slows things down.
+GET /api/v1/{shortUrl}
+Output: the original long URL
+```
 
-- The second approach is Base62 conversion. This is the one. Of hashing the URL itself you assign a unique ID to each record and then convert that
-ID into a short string using 62 characters. Since every ID is unique there are no collisions no checks needed and it is much faster. Base62 is
-like a code that makes sure every URL is unique.
+This design is simple and does exactly what it needs to do.
 
-5. Performance Optimization
+---
 
-- Using a cache makes a difference. URLs that get clicked a lot are stored in memory. The database does not need to be hit every single time. This
-speeds things up. Reduces load on the database significantly. The cache is like a box that stores the most used URLs.
+### URL Redirection
 
-6. Scalability
+When a user clicks on a link, the system has to decide how to redirect them. There are two options:
 
-- To handle traffic the system needs a load balancer to spread requests across multiple servers database sharding to split data into manageable
-chunks replication so there are backup copies of data and rate limiting to prevent abuse. The load balancer is like a manager that makes sure all
-the servers are working together.
+**301 – Permanent Redirect**
+The browser remembers this the first time and does not need to ask the server again. This is good for performance, but we lose visibility into how often the link is being used.
 
-THINGS I WAS CONFUSED ABOUT
+**302 – Temporary Redirect**
+Every time someone clicks on the link, it goes through the server. This is a bit slower, but we can track who clicked, when, and from where. This is better for understanding what is happening.
 
-- Some parts were not entirely clear to me. How does the unique ID generator work when there are servers running at the same time? If two servers
-generate the ID at the same moment that is a problem. I also want to know how sharding actually decides which piece of data goes to which database.
+The choice depends on what is more important: speed or tracking.
 
-- When do real companies actually choose 301 over 302. What are the business reasons behind that choice? If a URL changes or gets deleted how does
-the cache know to update or remove it? These are all questions that I need to find answers to.
+---
 
-TOPICS I WANT TO STUDY MORE
+### Data Storage
 
-- After going through this there are a things I want to understand better. I want to learn more about distributed systems and how they coordinate.
-I also want to know more about database sharding techniques. How caching systems like Redis work internally is also something I want to study.
+We cannot store everything in memory because it is expensive and does not survive if the system restarts. We need a database with a simple structure:
 
-- I want to learn more about load balancing strategies and bloom filters. These are all topics that can help me build a better URL shortener
-system.
+| Column   | Description                 |
+|----------|-----------------------------|
+| id       | A unique identifier         |
+| shortURL | The short link we generated |
+| longURL  | The original long URL       |
 
-SUMMARY
+---
 
-- This chapter walks through how to design a URL shortener that can realistically handle billions of requests. The author starts by laying out the
-requirements then proposes a practical design using APIs, a database and caching. The interesting part for me was the comparison between hashing
-and Base62 conversion. Base62 is clearly the choice because it ties the short URL to a unique ID rather than trying to hash the content, which
-avoids the whole collision problem.
+### Generating Short URLs
 
-- The overall design is solid. Reflects how these systems are actually built in the industry. Some of the advanced topics like distributed ID
-generation and database scaling still need more digging, into but the chapter gives a good foundation to build on. I can use this knowledge to
-build my URL shortener system that can handle a huge amount of traffic.
+This is the most interesting part. There are two ways to do it:
 
+#### Option 1: Hash + Collision Handling
+Take the URL, run it through a hash function like MD5 or SHA-1, and then trim the result to 7 characters. The problem is that sometimes different URLs can produce the same hash, which causes problems and needs extra work to fix.
 
+#### Option 2: Base62 Conversion
+Instead of hashing the URL, give each entry a unique ID and convert that number into a short string using 62 characters. Since every ID is unique, there are no collision problems. A 7-character Base62 string can represent 3.5 trillion combinations, which is more than enough for 365 billion URLs.
+
+This is clearly the better choice.
+
+---
+
+### How URL Shortening Works (Step by Step)
+
+1. The user submits a URL
+2. The system checks if the URL already exists in the database
+3. If it does, the system returns the existing short URL
+4. If it does not, the system generates a unique ID, converts it to Base62, stores it, and returns it
+
+---
+
+### How Redirection Works (Step by Step)
+
+1. The user clicks on a short URL
+2. The request goes to the load balancer
+3. The system checks the cache first
+   - If it is there, the system returns the long URL right away
+   - If it is not there, the system queries the database, caches the result, and then returns it
+4. The user is redirected to the original URL
+
+---
+
+### Making It Faster and More Reliable
+
+A few things can make the system work better:
+
+- **Caching** (like Redis) stores frequently used URLs in memory so the database is not hit every time
+- **Load balancers** spread the traffic across multiple servers
+- **Rate limiting** stops one user from using too much of the system
+- **Database replication and sharding** keep reads fast and make the system work even if something fails
+
+---
+
+## 3. What I Found Unclear
+
+There are a few things I want to understand better:
+
+- **Distributed ID generation** — how do we make sure multiple servers do not generate the same ID at the same time?
+- **Bloom filters** — I do not fully understand how they work for detecting duplicate URLs
+- **Cache invalidation** — how does the cache know when to update if something changes?
+- **301 vs 302 in practice** — how do real companies decide which one to use?
+
+---
+
+## 4. What I Want to Explore Next
+
+- Distributed ID generation (like Snowflake ID)
+- How Redis handles caching at a large scale
+- Load balancing strategies (like round robin or least connections)
+- Database sharding in practice
+- CAP theorem and how it applies to systems like this
+
+---
+
+## 5. Summary
+
+This analysis covers a practical way to build a URL shortener that can handle large-scale traffic. The design starts with the numbers and works backwards to figure out what the system needs, then builds up from APIs and storage to caching and traffic management.
+
+The biggest decision is to use Base62 encoding with unique IDs instead of hashing URLs directly. It is a clean solution to what would otherwise be a complicated collision problem, and it works well for hundreds of billions of URLs.
+
+Some of the more advanced parts — distributed ID generation, Bloom filters, and sharding strategy — still need more research. But the foundation here is solid and matches how these systems are actually built in the industry.
