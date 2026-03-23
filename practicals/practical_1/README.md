@@ -12,10 +12,12 @@ world, handles billions of records, responds instantly, and does not crash under
 2. Analysis of Solutions
 
 A. High-Level Design
+
 The design uses two simple APIs: one POST request to create a short URL, and one GET request to redirect to the original.
 This is clean, straightforward, and follows standard REST design.
 
 B. URL Redirection
+
 There are two ways to redirect:
 301 Redirect is permanent. The browser saves it, so next time the user clicks the link, it does not even hit the server.
 This is faster and uses less server resources.
@@ -25,11 +27,13 @@ So if the goal is speed, use 301. If the goal is tracking user behavior, use 302
 what the product needs.
 
 C. Data Storage
+
 At first, a hash table might seem like an option, but that only lives in memory, which is expensive and not practical at
 scale. A proper database with columns for ID, short URL, and long URL is the right approach for storing this kind of data
 long-term.
 
 D. Hashing (Most Important Part)
+
 There are two approaches here.
 The first is hash-based generation using something like MD5 or SHA-1. You take the long URL, hash it, and cut the result
 down to 7 characters. The problem is that two different URLs can sometimes produce the same hash, which is called a
@@ -39,10 +43,12 @@ ID to each record and then convert that ID into a short string using 62 characte
 ID is unique, there are no collisions, no extra checks needed, and it is much faster.
 
 E. Performance Optimization
+
 Using a cache (like Redis) makes a big difference. URLs that get clicked a lot are stored in memory, so the database does
 not need to be hit every single time. This speeds things up and reduces load on the database significantly.
 
 F. Scalability
+
 To handle massive traffic, the system needs a load balancer to spread requests across multiple servers, database sharding to
 split data into manageable chunks, replication so there are backup copies of data, and rate limiting to prevent abuse.
 
@@ -74,3 +80,4 @@ problem.
 The overall design is solid and reflects how these systems are actually built in the industry. Some of the more advanced
 topics like distributed ID generation and database scaling still need more digging into, but the chapter gives a good
 foundation to build on.
+
