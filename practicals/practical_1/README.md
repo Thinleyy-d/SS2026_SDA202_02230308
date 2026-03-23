@@ -1,4 +1,4 @@
-1. PROBLEM STATEMENT ANALYSIS
+1.PROBLEM STATEMENT ANALYSIS
 
 The problem is about designing a system like a URL shortener (example: TinyURL).
 What the system needs to do is take a long URL and turn it into a short one, and when someone clicks the short URL, it
@@ -9,7 +9,7 @@ My understanding of this is that it is not just a coding problem. It is about bu
 world, handles billions of records, responds instantly, and does not crash under heavy load.
 
 
-2. Analysis of Solutions
+2.Analysis of Solutions
 
 A. High-Level Design
 
@@ -53,7 +53,7 @@ To handle massive traffic, the system needs a load balancer to spread requests a
 split data into manageable chunks, replication so there are backup copies of data, and rate limiting to prevent abuse.
 
 
-3. Things I Was Confused About
+3.Things I Was Confused About
 
 Some parts were not entirely clear to me:
 How does the unique ID generator work when there are multiple servers running at the same time? If two servers generate the
@@ -63,14 +63,14 @@ When do real companies actually choose 301 over 302, and what are the business r
 If a URL changes or gets deleted, how does the cache know to update or remove it?
 
 
-4. Topics I Want to Study More
+4.Topics I Want to Study More
 
 After going through this, there are a few things I want to understand better: distributed systems and how they coordinate,
 database sharding techniques, how caching systems like Redis work internally, load balancing strategies, and bloom filters
 which were briefly mentioned.
 
 
-5. Summary
+5.Summary
 
 This chapter walks through how to design a URL shortener that can realistically handle billions of requests. The author
 starts by laying out the requirements clearly, then proposes a practical design using APIs, a database, and caching.
