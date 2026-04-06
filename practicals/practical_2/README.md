@@ -1,6 +1,7 @@
-Practical 2 – Automated Grading System (AGS)
+# Practical 2 – Automated Grading System (AGS)
 
-1. Practical Work Overview
+
+## 1.Practical Work Overview
 
 In this practical, I designed UML diagrams to model an Automated Grading System (AGS) for a university. Currently, the grading process is fully manual where students submit their assignments through GitHub, and professors download, run, and evaluate each submission individually. This approach is time-consuming and difficult to manage, especially with a large number of students.
 
@@ -15,7 +16,8 @@ Interaction Overview Diagram (IoD) – showing the current manual process
 Use Case Diagram (UCD) – defining system functionalities
 Interaction Overview Diagram (IoD) – showing the automated system process
 
-2. Interaction Overview Diagram (Actor-to-Actor)
+
+## 2. Interaction Overview Diagram (Actor-to-Actor)
 
 Diagram (Current Manual Process)
 
@@ -25,7 +27,7 @@ This diagram represents how the grading process currently works without any auto
 
 This process is slow and increases the workload on professors, especially when handling many students.
 
-3. Use Case Diagram (System Functionality)
+## 3. Use Case Diagram (System Functionality)
 
 Diagram
 
@@ -35,7 +37,7 @@ The Use Case Diagram shows the features that the Automated Grading System must s
 
 The system allows students to submit and resubmit assignments, while professors can set deadlines and grading rules. The system automatically runs the code, evaluates it, checks for plagiarism, and stores results securely.
 
-4. Interaction Overview Diagram (With System)
+## 4. Interaction Overview Diagram (With System)
 
 Diagram (Automated Process)
 
@@ -45,7 +47,7 @@ This diagram shows how the system improves the interaction between users. Instea
 
 The professor’s role is reduced to reviewing and adjusting grades if necessary. The system also ensures that all results are stored and sent to the LMS, making the process more efficient and reliable.
 
-5. Reflection
+## 5. Reflection
 
 From this practical, I learned how UML diagrams help in understanding and designing a system clearly before implementation. Initially, it was difficult to distinguish between different diagram types, but after working on this task, I understood how each diagram serves a different purpose.
 
@@ -53,7 +55,7 @@ The Interaction Overview Diagram helped me understand the flow of activities, wh
 
 One challenge I faced was deciding how detailed the diagrams should be. However, simplifying the process and focusing on the main interactions made it easier to design clear diagrams.
 
-6. Conclusion
+## 6. Conclusion
 
 In conclusion, this practical helped me understand how to model a real-world problem using UML diagrams. The Automated Grading System provides a better solution compared to the current manual process by saving time, reducing errors, and improving scalability.
 
