@@ -1,22 +1,24 @@
+# Practical 2 - UML Class Diagram & UML Object Diagram
+
 ## UML Class Diagram
 
 ### Overview
-The class diagram shows the **structure of the automated grading system**, including main classes, their roles, and relationships.
+The class diagram shows the structure of the automated grading system, including main classes, their roles, and relationships.
 
 ### Diagram
 
 ![alt text](<UML class diagram.png>)
 
 ### Key Classes
-- **Student** → submits assignments, views results, resubmits  
-- **Professor** → sets deadlines, defines criteria, reviews and modifies grades  
-- **Admin** → manages users and system settings  
-- **Assignment** → stores assignment details (title, deadline)  
-- **Submission** → represents student submissions  
-- **GradingSystem** → handles automation (run code, evaluate, save results)  
-- **Result** → stores score and feedback  
-- **PlagiarismService** → checks copied content  
-- **LMS** → stores final results  
+- Student → submits assignments, views results, resubmits  
+- Professor → sets deadlines, defines criteria, reviews and modifies grades  
+- Admin → manages users and system settings  
+- Assignment → stores assignment details (title, deadline)  
+- Submission → represents student submissions  
+- GradingSystem → handles automation (run code, evaluate, save results)  
+- Result → stores score and feedback  
+- PlagiarismService → checks copied content  
+- LMS → stores final results  
 
 ### Relationships
 - Student → Submission → Assignment  
@@ -25,14 +27,14 @@ The class diagram shows the **structure of the automated grading system**, inclu
 - GradingSystem → uses PlagiarismService and LMS  
 
 ### Summary
-The class diagram defines the **static structure** and shows how responsibilities are divided between users and the system.
+The class diagram defines the static structure and shows how responsibilities are divided between users and the system.
 
 ---
 
 ## UML Object Diagram
 
 ### Overview
-The object diagram shows a **real example of the system at runtime** using actual instances.
+The object diagram shows a real example of the system at runtime using actual instances.
 
 ### Diagram
 
@@ -52,4 +54,4 @@ The object diagram shows a **real example of the system at runtime** using actua
 - professor1 → assignment1  
 
 ### Summary
-The object diagram represents a **snapshot of real data**, helping to understand how the system works in practice.
+The object diagram represents a snapshot of real data, helping to understand how the system works in practice.
